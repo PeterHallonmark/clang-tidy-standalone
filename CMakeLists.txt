@@ -1,25 +1,40 @@
-project(clang-tidy-standalone)
 cmake_minimum_required(VERSION 3.13.4)
+project(clang-tidy-standalone)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
-include(clang_wrapper)
-include(utils)
+find_package(LLVM 20.1.8 EXACT REQUIRED CONFIG)
+find_package(Clang 20.1.8 EXACT REQUIRED CONFIG)
 
-in_source_build_guard()
-set_default_build_type(Debug)
+message(STATUS "Using LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using Clang ${CLANG_PACKAGE_VERSION}")
 
-find_package(LLVM 10.0.0 EXACT REQUIRED CONFIG)
+# Make all LLVM/Clang headers available
+include_directories(
+    ${LLVM_INCLUDE_DIRS}
+    ${CLANG_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}
+)
 
-include_directories("${LLVM_INCLUDE_DIRS}")
-link_directories("${LLVM_LIBRARY_DIRS}")
+# Generate clang-tidy config header (required by core)
+configure_file(
+    clang-tidy-config.h.cmake
+    ${CMAKE_BINARY_DIR}/clang-tidy-config.h
+)
 
-# Checks.
-# If you add a check, also add it to ClangTidyForceLinker.h in this directory.
-add_subdirectory(misc)
-set(ALL_CLANG_TIDY_CHECKS
-  clangTidyMiscModule
-  )
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
 
-# Other subtargets. These may reference ALL_CLANG_TIDY_CHECKS
-# and must be below its definition.
-add_subdirectory(tool)
+add_executable(clang-tidy-standalone
+    tool/ClangTidyMain.cpp
+    tool/ClangTidyToolMain.cpp
+)
+
+# Link only the core clang-tidy libraries
+target_link_libraries(clang-tidy-standalone
+    PRIVATE
+        clangTidy
+        clangAST
+        clangASTMatchers
+        clangBasic
+        clangTooling
+)
