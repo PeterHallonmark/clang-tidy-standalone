@@ -15,9 +15,9 @@
 //===----------------------------------------------------------------------===//
 
 #include "ClangTidyMain.h"
-#include "../ClangTidy.h"
+#include <clang-tidy/ClangTidy.h>
 #include "../ClangTidyForceLinker.h"
-#include "../GlobList.h"
+#include <clang-tidy/GlobList.h>
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "llvm/ADT/StringSet.h"
 #include "llvm/Support/CommandLine.h"
