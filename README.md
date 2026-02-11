@@ -13,14 +13,10 @@ https://github.com/OleksandrKvl/clang-tidy-standalone
 The original project provided a minimal proof-of-concept for building
 clang-tidy outside the LLVM monorepo.
 
-This fork significantly restructures the project to serve as:
-- a stable clang-tidy host ("golden source")
-- a foundation for building external clang-tidy plugins
-- a Docker-based, reproducible build environment
-- multi-LLVM-version support
+This fork updated the code to use a newer version of LLVM. 
 
 As a result, the directory structure and build system differ substantially
-from the original project.
+from the original project. This repository is no longer active.
 
 ### Usage
 
